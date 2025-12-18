@@ -13,14 +13,22 @@
       content="40대 전후의 '요즘 감성 적응력'을 웃으면서 확인하는 밈 기반 영포티 테스트"
     />
 
-    <!-- Open Graph (카톡 공유용) -->
+    <!-- Open Graph (카카오톡 공유 최적화) -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="나는 과연 영포티일까? - 영포티 테스트" />
     <meta
       property="og:description"
-      content="40대 전후의 '요즘 감성 적응력'을 웃으면서 확인하는 밉 기반 테스트"
+      content="40대 전후의 '요즘 감성 적응력'을 웃으면서 확인하는 밈 기반 테스트"
     />
     <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="나는 과연 영포티일까? - 영포티 테스트" />
+    <meta name="twitter:description" content="40대 전후의 '요즘 감성 적응력'을 웃으면서 확인하는 밈 기반 테스트" />
+    <meta name="twitter:image" content="/og-image.png" />
 
     <!-- 테마 컬러 -->
     <meta name="theme-color" content="#667eea" />
@@ -33,9 +41,102 @@
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7892198097991803"
       crossorigin="anonymous"
     ></script>
+
+    <style>
+      /* 초기 로딩 화면 스타일 */
+      #loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+      }
+
+      #loading-screen.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .loading-content {
+        text-align: center;
+        color: white;
+      }
+
+      .loading-emoji {
+        font-size: 64px;
+        margin-bottom: 20px;
+        animation: bounce 1.5s ease-in-out infinite;
+      }
+
+      .loading-text {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .loading-subtext {
+        font-size: 14px;
+        opacity: 0.8;
+      }
+
+      @keyframes bounce {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      /* 로딩 스피너 */
+      .spinner {
+        width: 40px;
+        height: 40px;
+        margin: 20px auto 0;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
+    <!-- 초기 로딩 화면 -->
+    <div id="loading-screen">
+      <div class="loading-content">
+        <div class="loading-emoji">🤔</div>
+        <div class="loading-text">나는 과연 영포티일까?</div>
+        <div class="loading-subtext">테스트 준비 중...</div>
+        <div class="spinner"></div>
+      </div>
+    </div>
+
     <div id="app"></div>
+    
     <script type="module" src="/src/main.js"></script>
+    
+    <!-- 로딩 화면 제거 스크립트 -->
+    <script>
+      window.addEventListener('load', () => {
+        const loadingScreen = document.getElementById('loading-screen');
+        setTimeout(() => {
+          loadingScreen.classList.add('fade-out');
+          setTimeout(() => {
+            loadingScreen.remove();
+          }, 300);
+        }, 500); // 최소 0.5초 표시
+      });
+    </script>
   </body>
 </html>
