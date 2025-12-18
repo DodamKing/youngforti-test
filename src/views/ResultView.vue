@@ -43,7 +43,7 @@
             <!-- 캡처 영역 밖 (스크롤 필요) -->
             <div class="below-fold">
                 <!-- 🎯 광고 #1 - 상단 디스플레이 광고 -->
-                <AdSense ad-slot="1234567890" ad-format="auto" />
+                <AdSense ad-slot="9442045555" ad-format="auto" />
 
                 <!-- 공유 버튼 (캡처 안내 제거) -->
                 <div class="share-buttons">
@@ -61,7 +61,7 @@
                 </div>
 
                 <!-- 🎯 광고 #2 - 중간 광고 -->
-                <AdSense ad-slot="0987654321" ad-format="auto" />
+                <AdSense ad-slot="9442045555" ad-format="auto" />
 
                 <!-- 다시하기 버튼 -->
                 <button class="retry-button" @click="retryTest">
@@ -74,7 +74,7 @@
                 </div>
 
                 <!-- 🎯 광고 #3 - 하단 광고 (선택사항) -->
-                <AdSense ad-slot="1122334455" ad-format="auto" />
+                <AdSense ad-slot="9442045555" ad-format="auto" />
             </div>
         </div>
     </div>
