@@ -45,7 +45,7 @@
                 <!-- 공유 섹션 -->
                 <div class="share-section">
                     <h3 class="share-title">🎉 결과를 공유해보세요!</h3>
-                    
+
                     <!-- 네이티브 공유 버튼 (큰 버튼) -->
                     <button class="share-btn primary" @click="shareNative">
                         <span class="btn-icon">📤</span>
@@ -80,7 +80,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- 토스트 메시지 -->
         <Transition name="toast">
             <div v-if="showToast" class="toast-message">
@@ -148,21 +148,43 @@ const shareNative = async () => {
     try {
         // 카카오톡 인앱 브라우저 감지
         const isKakaoTalk = /KAKAOTALK/i.test(navigator.userAgent)
-        
+
         if (isKakaoTalk) {
-            // 카톡에서는 링크 복사 + 토스트 안내
-            await navigator.clipboard.writeText(window.location.origin)
-            toastMessage.value = '링크가 복사되었습니다!\n카카오톡 대화창에 붙여넣기 해주세요 😊'
+            // ✅ 텍스트 + 링크를 한 문자열로 합치기
+            const shareText = `나의 스윗 영포티 지수는 ${finalScore.value}점! ${result.value.title}
+
+                            나도 테스트 해보기 👇
+                            ${window.location.origin}`
+
+            try {
+                // 방법 1: 최신 Clipboard API 시도
+                await navigator.clipboard.writeText(shareText)
+            } catch (err) {
+                // 방법 2: 구형 방식 폴백
+                const textarea = document.createElement('textarea')
+                textarea.value = shareText
+                textarea.style.position = 'fixed'
+                textarea.style.opacity = '0'
+                document.body.appendChild(textarea)
+                textarea.select()
+                document.execCommand('copy')
+                document.body.removeChild(textarea)
+            }
+
+            toastMessage.value = `✅ 복사 완료!
+
+                                카카오톡 대화창에
+                                "붙여넣기" 하면
+                                결과와 링크가 함께 공유됩니다 😊`
             showToast.value = true
             setTimeout(() => {
                 showToast.value = false
-            }, 3000)
+            }, 4000)
             return
         }
-        
-        // Web Share API 지원 확인
+
+        // 일반 브라우저: Web Share API
         if (!navigator.share) {
-            // 지원 안하면 링크 복사로 폴백
             copyLink()
             return
         }
@@ -173,10 +195,9 @@ const shareNative = async () => {
             url: window.location.origin
         })
     } catch (err) {
-        // 공유 취소 또는 에러시 아무것도 안함 (사용자가 취소한 것)
         if (err.name !== 'AbortError') {
             console.error('공유 실패:', err)
-            copyLink() // 에러시 링크 복사로 폴백
+            copyLink()
         }
     }
 }
@@ -272,10 +293,13 @@ const retryTest = () => {
 }
 
 @keyframes sparkleFloat {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.3;
         transform: translateY(0) scale(0.8);
     }
+
     50% {
         opacity: 1;
         transform: translateY(-10px) scale(1.2);
