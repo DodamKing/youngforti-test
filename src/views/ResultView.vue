@@ -80,6 +80,13 @@
                 </div>
             </div>
         </div>
+        
+        <!-- 토스트 메시지 -->
+        <Transition name="toast">
+            <div v-if="showToast" class="toast-message">
+                {{ toastMessage }}
+            </div>
+        </Transition>
     </div>
 </template>
 
@@ -93,6 +100,8 @@ import AdSense from '../components/AdSense.vue'
 const router = useRouter()
 const captureArea = ref(null)
 const linkCopied = ref(false)
+const showToast = ref(false)
+const toastMessage = ref('')
 
 // 데이터
 const totalScore = ref(0)
@@ -137,6 +146,20 @@ onMounted(() => {
 // 네이티브 공유 (Web Share API)
 const shareNative = async () => {
     try {
+        // 카카오톡 인앱 브라우저 감지
+        const isKakaoTalk = /KAKAOTALK/i.test(navigator.userAgent)
+        
+        if (isKakaoTalk) {
+            // 카톡에서는 링크 복사 + 토스트 안내
+            await navigator.clipboard.writeText(window.location.origin)
+            toastMessage.value = '링크가 복사되었습니다!\n카카오톡 대화창에 붙여넣기 해주세요 😊'
+            showToast.value = true
+            setTimeout(() => {
+                showToast.value = false
+            }, 3000)
+            return
+        }
+        
         // Web Share API 지원 확인
         if (!navigator.share) {
             // 지원 안하면 링크 복사로 폴백
@@ -145,8 +168,8 @@ const shareNative = async () => {
         }
 
         await navigator.share({
-            title: '나는 과연 영포티일까?',
-            text: `나의 영포티 지수는 ${finalScore.value}점! ${result.value.title}\n\n나도 테스트 해보기 👇`,
+            title: '나는 과연 스윗 영포티일까?',
+            text: `나의 스윗 영포티 지수는 ${finalScore.value}점! ${result.value.title}\n\n나도 테스트 해보기 👇`,
             url: window.location.origin
         })
     } catch (err) {
@@ -543,6 +566,54 @@ const retryTest = () => {
 
     .score-value-big {
         font-size: 60px;
+    }
+}
+
+/* ==================== 토스트 메시지 ==================== */
+.toast-message {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    white-space: pre-line;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    max-width: 90%;
+    line-height: 1.5;
+}
+
+/* 토스트 애니메이션 */
+.toast-enter-active {
+    transition: all 0.3s ease;
+}
+
+.toast-leave-active {
+    transition: all 0.2s ease;
+}
+
+.toast-enter-from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+}
+
+.toast-leave-to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+}
+
+/* 모바일에서 토스트 위치 조정 */
+@media (max-width: 375px) {
+    .toast-message {
+        bottom: 60px;
+        font-size: 14px;
+        padding: 14px 20px;
     }
 }
 </style>
