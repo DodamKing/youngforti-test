@@ -150,17 +150,15 @@ const shareNative = async () => {
         const isKakaoTalk = /KAKAOTALK/i.test(navigator.userAgent)
 
         if (isKakaoTalk) {
-            // ✅ 텍스트 + 링크를 한 문자열로 합치기
+            // ✅ 들여쓰기 없이 왼쪽 정렬
             const shareText = `나의 스윗 영포티 지수는 ${finalScore.value}점! ${result.value.title}
 
-                            나도 테스트 해보기 👇
-                            ${window.location.origin}`
+나도 테스트 해보기 👇
+${window.location.origin}`
 
             try {
-                // 방법 1: 최신 Clipboard API 시도
                 await navigator.clipboard.writeText(shareText)
             } catch (err) {
-                // 방법 2: 구형 방식 폴백
                 const textarea = document.createElement('textarea')
                 textarea.value = shareText
                 textarea.style.position = 'fixed'
@@ -171,11 +169,12 @@ const shareNative = async () => {
                 document.body.removeChild(textarea)
             }
 
+            // ✅ 토스트 메시지도 왼쪽 정렬
             toastMessage.value = `✅ 복사 완료!
 
-                                카카오톡 대화창에
-                                "붙여넣기" 하면
-                                결과와 링크가 함께 공유됩니다 😊`
+카카오톡 대화창에
+"붙여넣기" 하면
+결과와 링크가 함께 공유됩니다 😊`
             showToast.value = true
             setTimeout(() => {
                 showToast.value = false
