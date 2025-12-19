@@ -6,6 +6,9 @@
         <div class="title-section">
           <h1 class="main-title">
             나는 과연<br>
+            <span class="sweet-wrapper">
+              <span class="sweet-text">스윗</span>
+            </span>
             <span class="highlight">영포티</span>일까?
           </h1>
           <p class="subtitle">
@@ -85,6 +88,67 @@ const goToAgeInput = () => {
   font-weight: 800;
   line-height: 1.3;
   margin-bottom: 16px;
+  position: relative;
+}
+
+/* 스윗 스타일링 */
+.sweet-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.sweet-text {
+  display: inline-block;
+  font-size: 24px;
+  font-weight: 700;
+  color: #FFB6D9;
+  background: linear-gradient(135deg, #FF6B9D 0%, #FEC5E5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transform: rotate(-8deg) translateY(-8px);
+  margin-right: 4px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  animation: sweetBounce 2s ease-in-out infinite;
+  position: relative;
+}
+
+.sweet-text::before {
+  content: '✨';
+  position: absolute;
+  left: -20px;
+  top: -5px;
+  font-size: 14px;
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.sweet-text::after {
+  content: '✨';
+  position: absolute;
+  right: -20px;
+  top: -5px;
+  font-size: 14px;
+  animation: sparkle 1.5s ease-in-out infinite 0.75s;
+}
+
+@keyframes sweetBounce {
+  0%, 100% {
+    transform: rotate(-8deg) translateY(-8px);
+  }
+  50% {
+    transform: rotate(-10deg) translateY(-12px);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
 .highlight {
@@ -168,6 +232,10 @@ const goToAgeInput = () => {
 @media (max-width: 375px) {
   .main-title {
     font-size: 32px;
+  }
+  
+  .sweet-text {
+    font-size: 20px;
   }
   
   .highlight {

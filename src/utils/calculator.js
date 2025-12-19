@@ -1,10 +1,10 @@
 // 티어 계산
 export function calculateTier(rawScore) {
-  if (rawScore >= 12 && rawScore <= 24) return 'T1'
-  if (rawScore >= 25 && rawScore <= 36) return 'T2'
-  if (rawScore >= 37 && rawScore <= 48) return 'T3'
-  if (rawScore >= 49 && rawScore <= 54) return 'T4'
-  if (rawScore >= 55 && rawScore <= 60) return 'T5'
+  if (rawScore >= 12 && rawScore <= 23) return 'T1'
+  if (rawScore >= 24 && rawScore <= 33) return 'T2'
+  if (rawScore >= 34 && rawScore <= 44) return 'T3'
+  if (rawScore >= 45 && rawScore <= 53) return 'T4'
+  if (rawScore >= 54 && rawScore <= 60) return 'T5'
   return 'T3' // 기본값
 }
 

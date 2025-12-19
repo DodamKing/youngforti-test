@@ -5,12 +5,14 @@
             <div class="capture-area" ref="captureArea">
                 <!-- 로고/서비스명 -->
                 <div class="branding">
-                    나는 과연 영포티일까?
+                    나는 과연 스윗 영포티일까?
                 </div>
 
-                <!-- 이모지 -->
+                <!-- 이모지 + 반짝이 -->
                 <div class="emoji-section">
+                    <span class="sparkle sparkle-1">✨</span>
                     <span class="emoji">{{ result.emoji }}</span>
+                    <span class="sparkle sparkle-2">✨</span>
                 </div>
 
                 <!-- 타이틀 -->
@@ -19,18 +21,16 @@
                     <p class="subtitle">{{ result.subtitle }}</p>
                 </div>
 
-                <!-- 짧은 설명 (캡처용) -->
+                <!-- 짧은 설명 (말풍선 느낌) -->
                 <div class="short-description">
+                    <div class="bubble-tail"></div>
                     {{ result.shortDescription }}
                 </div>
 
-                <!-- 점수 표시 -->
+                <!-- 점수 표시 (더 강조) -->
                 <div class="score-section">
-                    <div class="score-box">
-                        <div class="score-label">영포티 지수</div>
-                        <div class="score-value">{{ finalScore }}점</div>
-                        <div class="score-tier">{{ tierName }} 등급</div>
-                    </div>
+                    <div class="score-value-big">{{ finalScore }}</div>
+                    <div class="score-label-big">스윗 영포티 지수</div>
                 </div>
 
                 <!-- 하단 브랜딩 (도메인 있을 때만 활성화) -->
@@ -42,12 +42,18 @@
 
             <!-- 캡처 영역 밖 (스크롤 필요) -->
             <div class="below-fold">
-                <!-- ✅ 광고 #1 - 이쁘게! -->
-                <AdSense />
+                <!-- 공유 섹션 -->
+                <div class="share-section">
+                    <h3 class="share-title">🎉 결과를 공유해보세요!</h3>
+                    
+                    <!-- 네이티브 공유 버튼 (큰 버튼) -->
+                    <button class="share-btn primary" @click="shareNative">
+                        <span class="btn-icon">📤</span>
+                        <span class="btn-text">친구에게 공유하기</span>
+                    </button>
 
-                <!-- 공유 버튼 (캡처 안내 제거) -->
-                <div class="share-buttons">
-                    <button class="share-btn link" @click="copyLink">
+                    <!-- 링크 복사 (작은 버튼) -->
+                    <button class="link-copy-btn" @click="copyLink">
                         {{ linkCopied ? '✓ 링크 복사됨!' : '🔗 링크 복사하기' }}
                     </button>
                 </div>
@@ -60,7 +66,7 @@
                     </div>
                 </div>
 
-                <!-- ✅ 광고 #2 -->
+                <!-- ✅ 광고 #1 - 베스트 위치 (상세 설명 직후) -->
                 <AdSense />
 
                 <!-- 다시하기 버튼 -->
@@ -72,9 +78,6 @@
                 <div class="footer">
                     <p>이 테스트는 재미를 위한 것으로<br>정확한 심리 분석이 아닙니다</p>
                 </div>
-
-                <!-- 🎯 광고 #3 - 하단 광고 (선택사항) -->
-                <AdSense />
             </div>
         </div>
     </div>
@@ -108,18 +111,6 @@ const backgroundColor = computed(() => {
     return tierColors[tier.value] || tierColors.T3
 })
 
-// 티어 이름
-const tierName = computed(() => {
-    const tierNames = {
-        T1: '브론즈',
-        T2: '실버',
-        T3: '골드',
-        T4: '플래티넘',
-        T5: '다이아몬드'
-    }
-    return tierNames[tier.value] || '골드'
-})
-
 // 마운트 시 데이터 로드
 onMounted(() => {
     const score = sessionStorage.getItem('totalScore')
@@ -142,6 +133,30 @@ onMounted(() => {
     // 최종 점수 (100점 만점)
     finalScore.value = calculateFinalScore(totalScore.value)
 })
+
+// 네이티브 공유 (Web Share API)
+const shareNative = async () => {
+    try {
+        // Web Share API 지원 확인
+        if (!navigator.share) {
+            // 지원 안하면 링크 복사로 폴백
+            copyLink()
+            return
+        }
+
+        await navigator.share({
+            title: '나는 과연 영포티일까?',
+            text: `나의 영포티 지수는 ${finalScore.value}점! ${result.value.title}\n\n나도 테스트 해보기 👇`,
+            url: window.location.origin
+        })
+    } catch (err) {
+        // 공유 취소 또는 에러시 아무것도 안함 (사용자가 취소한 것)
+        if (err.name !== 'AbortError') {
+            console.error('공유 실패:', err)
+            copyLink() // 에러시 링크 복사로 폴백
+        }
+    }
+}
 
 // 링크 복사
 const copyLink = async () => {
@@ -194,21 +209,54 @@ const retryTest = () => {
 /* 브랜딩 */
 .branding {
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.5px;
 }
 
-/* 이모지 */
+/* 이모지 + 반짝이 */
 .emoji-section {
     text-align: center;
-    margin: 20px 0;
+    margin: 16px 0;
+    position: relative;
+    display: inline-block;
+    width: 100%;
 }
 
 .emoji {
-    font-size: 80px;
+    font-size: 100px;
     display: inline-block;
     animation: popIn 0.5s ease;
+}
+
+.sparkle {
+    font-size: 24px;
+    position: absolute;
+    animation: sparkleFloat 2s ease-in-out infinite;
+}
+
+.sparkle-1 {
+    left: 20%;
+    top: 10%;
+    animation-delay: 0s;
+}
+
+.sparkle-2 {
+    right: 20%;
+    top: 10%;
+    animation-delay: 1s;
+}
+
+@keyframes sparkleFloat {
+    0%, 100% {
+        opacity: 0.3;
+        transform: translateY(0) scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.2);
+    }
 }
 
 @keyframes popIn {
@@ -232,85 +280,77 @@ const retryTest = () => {
     text-align: center;
     color: white;
     animation: fadeInUp 0.6s ease 0.2s both;
+    margin-bottom: 8px;
 }
 
 .title {
-    font-size: 28px;
-    font-weight: 800;
+    font-size: 32px;
+    font-weight: 900;
     line-height: 1.3;
     margin-bottom: 12px;
     word-break: keep-all;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .subtitle {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     opacity: 0.95;
     line-height: 1.4;
 }
 
-/* 짧은 설명 */
+/* 짧은 설명 (말풍선 느낌) */
 .short-description {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
-    padding: 24px;
-    border-radius: 16px;
+    padding: 20px 24px;
+    border-radius: 20px;
     color: white;
     font-size: 15px;
     line-height: 1.7;
     text-align: center;
     word-break: keep-all;
     animation: fadeInUp 0.6s ease 0.4s both;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* 점수 섹션 */
+.bubble-tail {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 점수 섹션 (강조) */
 .score-section {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     animation: fadeInUp 0.6s ease 0.6s both;
+    margin-top: 24px;
 }
 
-.score-box {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    padding: 24px 40px;
-    border-radius: 20px;
-    text-align: center;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.score-label {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-.score-value {
-    font-size: 48px;
+.score-value-big {
+    font-size: 72px;
     font-weight: 900;
     color: #FFE66D;
     line-height: 1;
-    margin-bottom: 8px;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    letter-spacing: -2px;
 }
 
-.score-tier {
+.score-label-big {
     font-size: 16px;
-    color: white;
-    font-weight: 700;
-}
-
-/* 하단 브랜딩 (주석 처리됨) */
-.bottom-branding {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.test-link {
-    font-size: 14px;
-    font-weight: 700;
     color: rgba(255, 255, 255, 0.9);
-    letter-spacing: 0.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
 @keyframes fadeInUp {
@@ -334,47 +374,49 @@ const retryTest = () => {
     gap: 32px;
 }
 
-.guide-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
+/* 공유 섹션 */
+.share-section {
+    background: white;
+    padding: 32px 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.guide-text {
-    font-size: 17px;
-    font-weight: 700;
+.share-title {
+    font-size: 20px;
+    font-weight: 800;
     color: #333;
-    margin-bottom: 12px;
-    line-height: 1.5;
-}
-
-.guide-subtext {
-    font-size: 14px;
-    color: #666;
-    font-weight: 500;
-}
-
-/* 공유 버튼 */
-.share-buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 8px;
-    /* 약간의 여백만 */
+    text-align: center;
+    margin-bottom: 24px;
 }
 
 .share-btn {
-    flex: 1;
-    padding: 18px;
-    font-size: 17px;
-    font-weight: 700;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 16px;
     border: none;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-family: inherit;
+    margin-bottom: 16px;
 }
 
-.share-btn.link {
-    background: #667eea;
+.share-btn.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+}
+
+.btn-icon {
+    font-size: 40px;
+}
+
+.btn-text {
+    font-size: 16px;
+    font-weight: 700;
 }
 
 .share-btn:hover {
@@ -384,6 +426,25 @@ const retryTest = () => {
 
 .share-btn:active {
     transform: translateY(0);
+}
+
+/* 링크 복사 버튼 (작게) */
+.link-copy-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.link-copy-btn:hover {
+    background: #ebebeb;
+    color: #333;
 }
 
 /* 상세 섹션 */
@@ -444,20 +505,28 @@ const retryTest = () => {
 /* 반응형 */
 @media (max-width: 375px) {
     .title {
-        font-size: 24px;
+        font-size: 28px;
     }
 
     .emoji {
-        font-size: 64px;
+        font-size: 80px;
     }
 
-    .score-value {
-        font-size: 40px;
+    .sparkle {
+        font-size: 20px;
+    }
+
+    .score-value-big {
+        font-size: 60px;
     }
 
     .short-description {
         font-size: 14px;
-        padding: 20px;
+        padding: 18px 20px;
+    }
+
+    .btn-icon {
+        font-size: 36px;
     }
 }
 
@@ -469,7 +538,11 @@ const retryTest = () => {
     }
 
     .emoji {
-        font-size: 64px;
+        font-size: 80px;
+    }
+
+    .score-value-big {
+        font-size: 60px;
     }
 }
 </style>
